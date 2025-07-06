@@ -1,0 +1,67 @@
+LabelEncoder mapping:
+  00000000 (decimal 0)  →  encoded 0
+  00000010 (decimal 2)  →  encoded 1
+  00000011 (decimal 3)  →  encoded 2
+  00001000 (decimal 8)  →  encoded 3
+  00001010 (decimal 10)  →  encoded 4
+  00001011 (decimal 11)  →  encoded 5
+  00001100 (decimal 12)  →  encoded 6
+  00001110 (decimal 14)  →  encoded 7
+  00001111 (decimal 15)  →  encoded 8
+  00100000 (decimal 32)  →  encoded 9
+  00110000 (decimal 48)  →  encoded 10
+  10000000 (decimal 128)  →  encoded 11
+  10000010 (decimal 130)  →  encoded 12
+  10000011 (decimal 131)  →  encoded 13
+  10001000 (decimal 136)  →  encoded 14
+  10001010 (decimal 138)  →  encoded 15
+  10001100 (decimal 140)  →  encoded 16
+  10100000 (decimal 160)  →  encoded 17
+  10100010 (decimal 162)  →  encoded 18
+  10101000 (decimal 168)  →  encoded 19
+  10101010 (decimal 170)  →  encoded 20
+  10110000 (decimal 176)  →  encoded 21
+  11000000 (decimal 192)  →  encoded 22
+  11000010 (decimal 194)  →  encoded 23
+  11000011 (decimal 195)  →  encoded 24
+  11001000 (decimal 200)  →  encoded 25
+  11001100 (decimal 204)  →  encoded 26
+  11001111 (decimal 207)  →  encoded 27
+  11100000 (decimal 224)  →  encoded 28
+  11110000 (decimal 240)  →  encoded 29
+  11110010 (decimal 242)  →  encoded 30
+  11111000 (decimal 248)  →  encoded 31
+  11111011 (decimal 251)  →  encoded 32
+  11111111 (decimal 255)  →  encoded 33
+  
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #
+=================================================================
+ conv2d (Conv2D)             (None, 129, 59, 32)       320
+
+ max_pooling2d (MaxPooling2  (None, 64, 29, 32)        0
+ D)
+
+ conv2d_1 (Conv2D)           (None, 64, 29, 64)        18496
+
+ max_pooling2d_1 (MaxPoolin  (None, 32, 14, 64)        0
+ g2D)
+
+ conv2d_2 (Conv2D)           (None, 32, 14, 128)       73856
+
+ max_pooling2d_2 (MaxPoolin  (None, 16, 7, 128)        0
+ g2D)
+
+ flatten (Flatten)           (None, 14336)             0
+
+ dense (Dense)               (None, 128)               1835136
+
+ dropout (Dropout)           (None, 128)               0
+
+ dense_1 (Dense)             (None, 34)                4386
+
+=================================================================
+Total params: 1932194 (7.37 MB)
+Trainable params: 1932194 (7.37 MB)
+Non-trainable params: 0 (0.00 Byte)
+_________________________________________________________________
