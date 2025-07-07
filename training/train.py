@@ -8,7 +8,7 @@ from sklearn.preprocessing import LabelEncoder
 import tensorflow as tf
 from tensorflow import keras
 
-
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from models import cnn_3_layers
 from models.cnn_3_layers import early_stopping, lr_scheduler
 

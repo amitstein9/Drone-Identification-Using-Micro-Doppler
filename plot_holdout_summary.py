@@ -91,17 +91,33 @@ def plot_summary(xp_id, holdout_dir, labels, snrs):
     print("Saved:", out)
     plt.show()
 
-# ---------------------------------------------------------------------
+
+
+def get_default_holdout_dir(xp):
+    xp_folder = os.path.join("outputs", "xp", xp)
+    dataset_file = os.path.join(xp_folder, "dataset.txt")
+    if not os.path.isfile(dataset_file):
+        raise ValueError(f"dataset.txt not found in {xp_folder}")
+    with open(dataset_file, "r") as f:
+        dataset_folder = f.read().strip()
+    # Typically, datasets are in data/datasets/<folder>
+    return dataset_folder
+
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("--xp", required=True, help="experiment ID")
-    p.add_argument("--holdout_dir", required=True,
-                   help="folder with holdout_snr_*.npz")
-    p.add_argument("--labels", nargs=4, required=True,
-                   help="four binary labels (00001111 11111111 ...)")
-    p.add_argument("--snrs", nargs="+", type=int, required=True,
-                   help="one or more SNR values, e.g. 12 8 4 0")
+    p.add_argument("--holdout_dir", required=False,
+                   help="folder with holdout_snr_*.npz (default: read from outputs/xp/<xp>/dataset.txt)")
+    p.add_argument("--labels", nargs=4, default=["11000000", "11111111", "10000000", "10101010"],
+                   help="four binary labels (default: 11000000 11111111 10000000 10101010)")
+    p.add_argument("--snrs", nargs="+", type=int, default=[24, 20, 16, 10],
+                   help="one or more SNR values (default: 24 20 16 10)")
     args = p.parse_args()
 
-    plot_summary(args.xp, args.holdout_dir, args.labels,
-                 args.snrs)
+    # Default for holdout_dir
+    holdout_dir = args.holdout_dir
+    if holdout_dir is None:
+        holdout_dir = get_default_holdout_dir(args.xp)
+
+    # Now call your summary plot function with resolved parameters
+    plot_summary(args.xp, holdout_dir, args.labels, args.snrs)

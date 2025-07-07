@@ -1,7 +1,10 @@
-numpy
+numpy==1.23.*
 scipy
-tensorflow
+tensorflow==2.11.0
 matplotlib
 scikit-learn
 opencv-python
 h5py
+seaborn
+pandas
+jupyter

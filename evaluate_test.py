@@ -86,37 +86,54 @@ def plot_holdout_examples(xp_folder, holdout_dir, label_bin):
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--xp', required=True)
-    p.add_argument('--holdout_dir')
+    p.add_argument('--holdout_dir', help="Dataset folder. If not provided, uses the one from dataset.txt.")
     p.add_argument('--plot_class')
     args = p.parse_args()
 
-    base = os.path.join('outputs','xp', args.xp)
-    classes = np.load(os.path.join(base,'classes.npy'))
+    base = os.path.join('outputs', 'xp', args.xp)
+    classes = np.load(os.path.join(base, 'classes.npy'))
 
-    if args.plot_class and args.holdout_dir:
-        plot_holdout_examples(base, args.holdout_dir, args.plot_class)
-        #return
+    # Determine holdout_dir (from arg or from dataset.txt)
+    if args.holdout_dir is not None:
+        holdout_dir = args.holdout_dir
+    else:
+        dataset_txt = os.path.join(base, 'dataset.txt')
+        if not os.path.exists(dataset_txt):
+            raise FileNotFoundError(f"dataset.txt not found in {base}. Cannot determine holdout_dir.")
+        with open(dataset_txt, 'r') as f:
+            holdout_dir = f.read().strip()
+        print(f"[INFO] Using holdout_dir from dataset.txt: {holdout_dir}")
 
-    if args.holdout_dir:
-        out_dir= os.path.join(base,'holdout_results',args.holdout_dir)
+    if args.plot_class:
+        plot_holdout_examples(base, holdout_dir, args.plot_class)
+        return
+
+    if holdout_dir:
+        out_dir = os.path.join(base, 'holdout_results', holdout_dir)
+        holdout_dir_full = os.path.join('data', 'datasets', holdout_dir)
+        if not os.path.isdir(holdout_dir_full):
+            print(f"[ERROR] Dataset folder not found: {holdout_dir_full}")
+            print("Check dataset.txt and the actual folders in data/datasets/")
+            exit(1)
+
         results = {}
-        for f in sorted(os.listdir(os.path.join('data','datasets', args.holdout_dir))):
-            if not f.startswith('holdout_snr_'): 
+        for f in sorted(os.listdir(holdout_dir_full)):
+            if not f.startswith('holdout_snr_'):
                 continue
-            snr  = int(re.match(r'holdout_snr_(-?\d+)\.npz', f).group(1))
-            X, y_raw = load_test_data(os.path.join('data','datasets', args.holdout_dir, f))
+            snr = int(re.match(r'holdout_snr_(-?\d+)\.npz', f).group(1))
+            X, y_raw = load_test_data(os.path.join(holdout_dir_full, f))
             y = encode_labels(y_raw, classes)
             acc, rep, cm, preds = evaluate(base, X, y)
-            os.makedirs(os.path.join(out_dir,f.split('.')[0]), exist_ok=True)
-            save_results(os.path.join(out_dir,f.split('.')[0]), acc, rep, cm, classes, y, preds)
-            results[snr] = acc                      
+            os.makedirs(os.path.join(out_dir, f.split('.')[0]), exist_ok=True)
+            save_results(os.path.join(out_dir, f.split('.')[0]), acc, rep, cm, classes, y, preds)
+            results[snr] = acc
 
-        sweep_path = os.path.join(base,'holdout_results',args.holdout_dir, 'holdout_accuracies.json')
+        sweep_path = os.path.join(base, 'holdout_results', holdout_dir, 'holdout_accuracies.json')
         with open(sweep_path, "w") as f:
             json.dump(results, f, indent=2)
-        print("Wrote accuracy sweep to", sweep_path) 
+        print("Wrote accuracy sweep to", sweep_path)
     else:
-        p.error('Provide --holdout_dir or --plot_class with --holdout_dir')
+        p.error('Provide --holdout_dir or ensure dataset.txt exists in outputs/xp/<xp>/')
 
 if __name__=='__main__':
     main()

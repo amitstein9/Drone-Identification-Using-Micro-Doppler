@@ -9,6 +9,8 @@ from sklearn.model_selection import train_test_split
 from collections import Counter, defaultdict
 rnd.seed(42)
 np.random.seed(42)
+
+
 # -------------------------------
 #     User‐Defined Parameters
 # -------------------------------
@@ -30,7 +32,9 @@ SNR_CONSTANT = 8
 snr_values_train  = list(range(-8, 25, 2))+ [100]
 snr_values_test   = list(range(-8, 25, 2))+ [100]
 holdout_snr_values=list(range(-8, 25, 2))+ [100]
-source_folder     = 'hov_on_off_trainable'
+
+source_folder     = 'four_classes_hov_on'
+
 
 directory         = os.path.join('data', 'raw_data', source_folder)
 suffix            = (
@@ -38,7 +42,7 @@ suffix            = (
     f"all_snr_test_{snr_values_test[0]+SNR_CONSTANT}-{snr_values_test[-1]+SNR_CONSTANT}"
     f"_shifts_{N_SHIFTS_PER_SEG}_holdouts_{holdout_snr_values[0]+SNR_CONSTANT}-{holdout_snr_values[-1]+SNR_CONSTANT}_time_masked"
 )
-output_folder     = os.path.join('data','datasets',f"dataset_{source_folder}_{suffix}")
+
 
 
 
@@ -171,7 +175,18 @@ def apply_affine_test(spec):
 #         Main Pipeline
 # -------------------------------
 if __name__=='__main__':
-    # 1) load & segment & time‐shifts
+    import argparse  
+    # Argument parsing (place after imports and seed setting)
+    parser = argparse.ArgumentParser(description="Synthetic dataset creation.")
+    parser.add_argument("--output_folder", type=str, default=None, help="Custom output folder name.")
+    args = parser.parse_args()
+
+    # Later, replace output_folder assignment:
+    if args.output_folder:
+        output_folder = os.path.join('data', 'datasets', args.output_folder)
+    else:
+        output_folder = os.path.join('data', 'datasets', f"dataset_{source_folder}_{suffix}")
+
     train_snr_idx = defaultdict(int)
     test_snr_idx  = defaultdict(int)
     ts_data=[]

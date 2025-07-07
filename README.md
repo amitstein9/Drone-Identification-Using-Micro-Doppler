@@ -28,29 +28,32 @@ Your project directory should look like this:
 - classify.py
 - requirements.txt
 
-Setup Environment:
-------------------
-Create and activate a virtual environment:
+---
 
-Windows:
-    python -m venv myenv
-    .\myenv\Scripts\activate
+## 1. Environment Setup
 
-Linux/macOS:
-    python -m venv myenv
-    source myenv/bin/activate
+It is **strongly recommended** to use a fresh Conda environment for consistent results.  
+**Python 3.10** is recommended. Newer or older versions may not be compatible with all packages.
+```
+# Create and activate environment
+conda create -n drone_env python=3.10 -y
+conda activate drone_env
 
-Install required packages:
-    pip install -r requirements.txt
+# (Optional) Install scientific stack via conda for performance
+conda install numpy=1.23 scipy matplotlib scikit-learn pandas
 
+# Install all other dependencies
+pip install -r requirements.txt
+```
 Step 1: Create Synthetic Dataset:
 ---------------------------------
 Navigate to the data folder and run:
 
-    python create_synthetic.py
+    python data/create_synthetic.py --output_folder <your_dataset_name>
+    example: python data/create_synthetic.py --output_folder simple_dataset
 
 Output:
-- Synthetic dataset saved in "data/datasets/dataset_<your_dataset_name>/"
+- Synthetic dataset saved in "data/datasets/<your_dataset_name>/"
     - train.npz (training data)
     - val.npz (validation data)
     - holdout_snr_<snr_values>.npz (evaluation data)
@@ -59,7 +62,9 @@ Step 2: Train CNN Model:
 ------------------------
 To start a new experiment:
 
-    python train.py --d_set <your_dataset_name> --epochs 20
+    python training\train.py --d_set <your_dataset_name> --epochs 20
+
+    example: python training\train.py --d_set simple_dataset --epochs 6
 
 Replace <your_dataset_name> with the actual dataset folder name.
 
@@ -71,27 +76,27 @@ Output:
 
 To continue a stopped training experiment:
 
-    python train.py --xp <xp_id> --epochs 10
+    python training\train.py --xp <xp_id> --epochs 10
 
 To restart an experiment from scratch (ignore previous checkpoints):
 
-    python train.py --xp <xp_id> --epochs 10 --fresh_start
+    python training\train.py --xp <xp_id> --epochs 10 --fresh_start
 
 Step 3: Evaluate CNN Model on Holdout Set:
 ------------------------------------------
 Evaluate trained model:
-
     python evaluate_test.py --xp <xp_id> --holdout_dir dataset_<your_dataset_name>
 
+    example: python plot_holdout_summary.py --xp bbc7e8e9
 Output:
 - Evaluation results stored in "outputs/xp/<xp_id>/holdout_results/dataset_<your_dataset_name>/"
     - accuracy, confusion matrix, classification reports.
 
 To plot holdout summary (accuracy curves and example spectrograms):
+    python plot_holdout_summary.py --xp <xp_id>
+    python plot_holdout_summary.py --xp <xp_id> --holdout_dir dataset_<your_dataset_name> --labels 11000000 11111111 10000000 10101010 --snrs 24 20 16 10
 
-    python plot_holdout_summary.py --xp <xp_id> --holdout_dir dataset_<your_dataset_name> --labels 00000000 00000001 00000010 00000011 --snrs 10 12 14 16
-
-Replace labels and snrs parameters with your relevant classes and SNRs.
+    # Replace labels and snrs parameters with your relevant classes and SNRs, You can also replace holdout_dir and your_dataset_name parameter and default will be chosen.
 
 Step 4: Classify New .mat File:
 -------------------------------
@@ -99,6 +104,7 @@ Classify a new raw .mat file:
 
     python classify.py <xp_id> path_to_your_file.mat
 
+    example: python classify.py --xp bbc7e8e9 --output_folder data\raw_data\four_classes_hov_on\DJI_Hovering_on_Rotors_Foil_10101010__Freq_3.300__Sample_3.mat
 Output:
 - Prints predicted label and frequency of occurrence.
 
