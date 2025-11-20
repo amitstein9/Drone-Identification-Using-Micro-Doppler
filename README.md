@@ -8,8 +8,6 @@ This repository contains code to generate a synthetic dataset, train a CNN, eval
 
 [![Project Poster](documents/Poster.png)](documents/Poster.pdf)
 
-*Click the poster to open the full PDF version in the `documents/` folder.*
-
 ---
 
 ## How to Run the Code
