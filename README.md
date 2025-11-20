@@ -1,6 +1,6 @@
-# Synthetic Dataset Creation, CNN Training and Evaluation Guide
+# Drone Identification Using Micro Doppler
 
-This repository contains code to generate a synthetic dataset, train a CNN, evaluate it, and classify new signals.
+This repository contains code to generate a synthetic dataset, train a CNN, evaluate it, and classify micro-Doppler–based drone signals.
 
 ---
 
