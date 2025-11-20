@@ -6,7 +6,7 @@ This repository contains code to generate a synthetic dataset, train a CNN, eval
 
 ## Project Poster
 
-[![Project Poster](documents/project_poster.png)](documents/Poster.pdf)
+[![Project Poster](documents/Poster.png)](documents/Poster.pdf)
 
 *Click the poster to open the full PDF version in the `documents/` folder.*
 
